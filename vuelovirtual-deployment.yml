@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuelovirtual-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vuelovirtual
+  template:
+    metadata:
+      labels:
+        app: vuelovirtual
+    spec:
+      containers:
+        - name: vuelovirtual-app
+          image: vuelovirtual-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8089
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql:3306/vuelovirtual"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: MYSQL_ROOT_PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vuelovirtual-service
+spec:
+  ports:
+  - port: 8089
+    targetPort: 8089
+  selector:
+    app: vuelovirtual
+  type: LoadBalancer
