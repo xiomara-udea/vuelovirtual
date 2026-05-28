@@ -40,4 +40,4 @@ spec:
     targetPort: 8089
   selector:
     app: vuelovirtual
-  type: LoadBalancer
+  type: NodePort
